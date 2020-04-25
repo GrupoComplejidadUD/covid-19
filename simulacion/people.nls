@@ -1,0 +1,100 @@
+to create-uninfected-people
+  create-people (population - infected-quantity)[
+    set shape "person"
+    set age random 70
+    set district (random 19) + 1 
+    set vulnerability_index 0.2
+    set gender "Male"
+    set place_of_care "none"
+    ; set mobility "" I'm not sure what values could have this field
+    set status "uninfected"
+    set level_of_infection "none"
+    set time_infection 0
+    set previous_medical_condition "none"
+    set color white
+    set size 1.5
+    set xcor random-xcor
+    set ycor random-ycor
+    set viral_number 0
+    set infection_time 0
+    
+    if (show-age = true)[
+      set label age
+      set label-color red
+    ]
+  ]
+end
+
+to create-infected-people
+  create-people infected-quantity [
+    set shape "person"
+    set age random 70
+    set district (random 19) + 1 
+    set vulnerability_index 0.2
+    set gender "Male"
+    set place_of_care "home"
+    ; set mobility "" I'm not sure what values could have this field
+    set status "infected"
+    set level_of_infection "low"
+    set time_infection random 5
+    set previous_medical_condition "none"
+    
+    set color red
+    set size 1.5
+    set xcor random-xcor
+    set ycor random-ycor
+    set viral_number 1
+    set infection_time 1
+    
+    if (show-age = true)[
+      set label age
+      set label-color green
+    ]
+  ]
+end
+
+to step-people
+  infected-people
+  ask people [fd 1]
+end
+
+to infected-people
+  ask people [
+    right (random 360)
+    let infected who
+    ; Rule to infect an agent
+    
+    if (status = "infected")[
+      set infection_time infection_time + 1
+      
+      ask people-here[
+        let probability_of_contagion precision (random-float 1) 2
+        
+        if (viral_number = 0) and (distance myself < 0.5) and (probability_of_contagion <= 0.5)[
+          ask self[
+            set status "infected"
+            set level_of_infection "low"
+            set time_infection random 5
+            set previous_medical_condition "none"
+            set viral_number probability_of_contagion
+            set label probability_of_contagion
+            set color red
+            set label-color yellow
+            create-link-with person infected
+          ]
+        ]
+      ]
+      let probability_of_healing precision (random-float 1) 2
+      
+      if infection_time > dead-to-time [
+        die 
+        set number-of-deaths (number-of-deaths + 1)
+      ]
+      
+      if (probability_of_healing <= 0.5) and (infection_time > 360) [
+        set status "recovered"
+        set color green
+      ]
+    ]
+  ]
+end
