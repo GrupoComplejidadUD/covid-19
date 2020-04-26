@@ -1,4 +1,5 @@
 breed [ people person ]
+breed [ places place ]
 
 globals [ number-of-deaths ]
 
@@ -17,6 +18,16 @@ people-own[
   previous_medical_condition
   viral_number
   infection_time
+]
+
+places-own[
+  max-capacity-workers       ;; how many people can be in this place
+  max-capacity-users         ;; how many people can be in this place
+  locality-x                 ;; x coordinate for the locality
+  locality-y                 ;; y coordinate for the locality
+  schedule                   ;; opening and closing time
+  infected-people            ;; how many people are infected
+  infectiosness-accumulation ;; how many people can be in this place
 ]
 
 to setup
