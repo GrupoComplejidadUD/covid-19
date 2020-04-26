@@ -1,54 +1,10 @@
-breed [ people person ]
-breed [ places place ]
 
-globals [ number-of-deaths ]
-
-__includes [ "people.nls" ]
-__includes [ "places.nls" ]
-
-people-own[
-  age
-  district
-  vulnerability_index
-  gender
-  place_of_care
-  mobility
-  status
-  level_of_infection
-  time_infection
-  previous_medical_condition
-  viral_number
-  infection_time
-]
-
-places-own[
-  max-capacity-workers       ;; how many people can be in this place
-  max-capacity-users         ;; how many people can be in this place
-  locality-x                 ;; x coordinate for the locality
-  locality-y                 ;; y coordinate for the locality
-  schedule                   ;; opening and closing time
-  infected-people            ;; how many people are infected
-  infectiosness-accumulation ;; how many people can be in this place
-]
-
-to setup
-  clear-all
-  reset-ticks
-  set number-of-deaths 0
-  create-uninfected-people
-  create-infected-people
-end
-
-to start
-  step-people
-  tick
-end
 @#$#@#$#@
 GRAPHICS-WINDOW
 210
 10
-1063
-864
+647
+448
 -1
 -1
 13.0
@@ -61,155 +17,15 @@ GRAPHICS-WINDOW
 1
 1
 1
--32
-32
--32
-32
+-16
+16
+-16
+16
 0
 0
 1
 ticks
 30.0
-
-BUTTON
-19
-12
-85
-45
-Setup
-setup
-NIL
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-1
-
-BUTTON
-111
-13
-174
-46
-Start
-start
-T
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-1
-
-INPUTBOX
-18
-62
-175
-122
-population
-100.0
-1
-0
-Number
-
-SWITCH
-18
-211
-176
-244
-show-age
-show-age
-1
-1
--1000
-
-INPUTBOX
-18
-137
-177
-197
-infected-quantity
-10.0
-1
-0
-Number
-
-PLOT
-1133
-28
-1333
-178
-Contagion curve
-Ticks
-Count
-0.0
-10.0
-0.0
-10.0
-true
-false
-"" ""
-PENS
-"Infected" 1.0 0 -2674135 true "" "plot count people with [status = \"infected\"]"
-"Healthy" 1.0 0 -12087248 true "" "plot count people with [status = \"uninfected\"]"
-
-MONITOR
-1131
-203
-1211
-248
-Uninfected
-count people with [status = \"uninfected\"]
-17
-1
-11
-
-MONITOR
-1226
-204
-1303
-249
-Infected
-count people with [status = \"infected\"]
-17
-1
-11
-
-INPUTBOX
-18
-258
-117
-318
-dead-to-time
-480.0
-1
-0
-Number
-
-MONITOR
-1133
-273
-1262
-318
-number-of-deaths
-count number-of-deaths
-17
-1
-11
-
-TEXTBOX
-134
-285
-171
-303
-Hours
-11
-0.0
-1
 
 @#$#@#$#@
 ## WHAT IS IT?
