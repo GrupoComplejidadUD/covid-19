@@ -1,6 +1,6 @@
 breed [ people person ]
 
-globals [ number-of-deaths ]
+globals [ number-of-deaths contagion-memory ]
 
 __includes [ "people.nls" ]
 
@@ -16,26 +16,28 @@ people-own[
   time_infection
   previous_medical_condition
   viral_number
-  infection_time
+  personal-immunity-time
 ]
 
 to setup
   clear-all
   reset-ticks
   set number-of-deaths 0
+  set contagion-memory 0
   create-uninfected-people
   create-infected-people
 end
 
 to start
+  set contagion-memory count people with [status = "infected"]
   step-people
   tick
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
-210
+290
 10
-1063
+1143
 864
 -1
 -1
@@ -60,10 +62,10 @@ ticks
 30.0
 
 BUTTON
-19
-12
-85
-45
+8
+10
+74
+43
 Setup
 setup
 NIL
@@ -77,10 +79,10 @@ NIL
 1
 
 BUTTON
-111
-13
-174
-46
+86
+10
+149
+43
 Start
 start
 T
@@ -94,21 +96,21 @@ NIL
 1
 
 INPUTBOX
-18
-62
-175
-122
+8
+61
+91
+121
 population
-100.0
+800.0
 1
 0
 Number
 
 SWITCH
-18
-211
-176
-244
+26
+778
+184
+811
 show-age
 show-age
 1
@@ -116,10 +118,10 @@ show-age
 -1000
 
 INPUTBOX
-18
-137
-177
-197
+100
+62
+225
+122
 infected-quantity
 10.0
 1
@@ -127,10 +129,10 @@ infected-quantity
 Number
 
 PLOT
-1133
-28
-1333
-178
+1159
+11
+1464
+176
 Contagion curve
 Ticks
 Count
@@ -139,17 +141,19 @@ Count
 0.0
 10.0
 true
-false
+true
 "" ""
 PENS
 "Infected" 1.0 0 -2674135 true "" "plot count people with [status = \"infected\"]"
-"Healthy" 1.0 0 -12087248 true "" "plot count people with [status = \"uninfected\"]"
+"Uninfected" 1.0 0 -12087248 true "" "plot count people with [status = \"uninfected\"]"
+"Died" 1.0 0 -10146808 true "" "plot number-of-deaths"
+"Recovered" 1.0 0 -4079321 true "" "plot count people with [status = \"recovered\"]"
 
 MONITOR
-1131
-203
-1211
-248
+1490
+63
+1569
+108
 Uninfected
 count people with [status = \"uninfected\"]
 17
@@ -157,47 +161,216 @@ count people with [status = \"uninfected\"]
 11
 
 MONITOR
-1226
-204
-1303
-249
+1584
+64
+1661
+109
 Infected
 count people with [status = \"infected\"]
 17
 1
 11
 
-INPUTBOX
-18
-258
-117
-318
-dead-to-time
-480.0
-1
-0
-Number
-
 MONITOR
-1133
-273
-1262
-318
+1585
+117
+1714
+162
 number-of-deaths
-count number-of-deaths
+number-of-deaths
 17
 1
 11
 
-TEXTBOX
-134
-285
-171
-303
-Hours
-11
-0.0
+MONITOR
+1491
+118
+1571
+163
+Recovered
+count people with [status = \"recovered\"]
+17
 1
+11
+
+SLIDER
+8
+128
+226
+161
+min-illness-time
+min-illness-time
+0
+400
+350.0
+1
+1
+hours
+HORIZONTAL
+
+SLIDER
+8
+170
+225
+203
+max-illness-time
+max-illness-time
+0
+720
+360.0
+1
+1
+hours
+HORIZONTAL
+
+PLOT
+1161
+188
+1470
+420
+Contagions per tick
+NIL
+NIL
+0.0
+10.0
+0.0
+10.0
+true
+false
+"" ""
+PENS
+"default" 1.0 2 -13791810 true "" "plot count people with [time_infection = 1]"
+
+BUTTON
+161
+10
+224
+43
+step
+start
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+SWITCH
+8
+344
+133
+377
+reinfected?
+reinfected?
+0
+1
+-1000
+
+PLOT
+1163
+440
+1469
+662
+Per gender
+Ticks
+Count
+0.0
+10.0
+0.0
+10.0
+true
+true
+"" ""
+PENS
+"Male" 1.0 0 -13791810 true "" "plot count people with[status = \"infected\" and gender = \"male\"]"
+"Female" 1.0 0 -2674135 true "" "plot count people with[status = \"infected\" and gender = \"female\"]"
+
+MONITOR
+1490
+11
+1569
+56
+Male
+count people with [gender = \"male\"]
+17
+1
+11
+
+MONITOR
+1583
+11
+1659
+56
+Female
+count people with [gender = \"female\"]
+17
+1
+11
+
+SWITCH
+141
+344
+265
+377
+not-move?
+not-move?
+1
+1
+-1000
+
+SLIDER
+7
+211
+225
+244
+dead-to-time
+dead-to-time
+0
+500
+377.0
+1
+1
+hours
+HORIZONTAL
+
+SLIDER
+8
+297
+226
+330
+immunity-time
+immunity-time
+0
+360
+2.0
+1
+1
+Days
+HORIZONTAL
+
+TEXTBOX
+8
+265
+264
+284
+Warning: Immunity time is on DAYS scale
+12
+15.0
+1
+
+SWITCH
+11
+394
+221
+427
+show-who-infected-who
+show-who-infected-who
+0
+1
+-1000
 
 @#$#@#$#@
 ## WHAT IS IT?

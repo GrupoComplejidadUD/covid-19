@@ -1,10 +1,17 @@
 to create-uninfected-people
   create-people (population - infected-quantity)[
+    let select-gender precision (random-float 1) 2
+    
+    ifelse (select-gender < 0.48)[
+      set gender "male"
+    ][
+      set gender "female"
+    ]
     set shape "person"
     set age random 70
     set district (random 19) + 1 
     set vulnerability_index 0.2
-    set gender "Male"
+    
     set place_of_care "none"
     ; set mobility "" I'm not sure what values could have this field
     set status "uninfected"
@@ -16,7 +23,6 @@ to create-uninfected-people
     set xcor random-xcor
     set ycor random-ycor
     set viral_number 0
-    set infection_time 0
     
     if (show-age = true)[
       set label age
@@ -27,16 +33,23 @@ end
 
 to create-infected-people
   create-people infected-quantity [
+    let select-gender precision (random-float 1) 2
+    
+    ifelse (select-gender < 0.48)[
+      set gender "male"
+    ][
+      set gender "female"
+    ]
+    
     set shape "person"
     set age random 70
     set district (random 19) + 1 
     set vulnerability_index 0.2
-    set gender "Male"
     set place_of_care "home"
     ; set mobility "" I'm not sure what values could have this field
     set status "infected"
     set level_of_infection "low"
-    set time_infection random 5
+    set time_infection 1
     set previous_medical_condition "none"
     
     set color red
@@ -44,7 +57,6 @@ to create-infected-people
     set xcor random-xcor
     set ycor random-ycor
     set viral_number 1
-    set infection_time 1
     
     if (show-age = true)[
       set label age
@@ -55,7 +67,18 @@ end
 
 to step-people
   infected-people
-  ask people [fd 1]
+  ifelse (not-move? = true)[
+    ask people with[status != "infected"] [fd 1]
+  ][
+    ask people [fd 1]
+  ]
+  ask people with[status = "recovered"] [
+    set personal-immunity-time personal-immunity-time - 1
+    if (personal-immunity-time <= 0)[
+      set status "uninfected"
+      set color white
+    ]
+  ]
 end
 
 to infected-people
@@ -65,36 +88,63 @@ to infected-people
     ; Rule to infect an agent
     
     if (status = "infected")[
-      set infection_time infection_time + 1
+      set time_infection time_infection + 1
       
       ask people-here[
         let probability_of_contagion precision (random-float 1) 2
-        
-        if (viral_number = 0) and (distance myself < 0.5) and (probability_of_contagion <= 0.5)[
-          ask self[
-            set status "infected"
-            set level_of_infection "low"
-            set time_infection random 5
-            set previous_medical_condition "none"
-            set viral_number probability_of_contagion
-            set label probability_of_contagion
-            set color red
-            set label-color yellow
-            create-link-with person infected
-          ]
+        ifelse reinfected? = true [
+          if (distance myself < 0.5) and (probability_of_contagion <= 0.5) and (myself != self) and (status != "recovered") and (status != "infected")[
+            ask self[
+              set status "infected"
+              set level_of_infection "low"
+              set time_infection 1
+              set previous_medical_condition "none"
+              set viral_number probability_of_contagion
+              ;set label probability_of_contagion
+              set color red
+              ;set label-color yellow
+              if show-who-infected-who = true [
+                create-link-with person infected
+              ]
+            ]
+          ] 
+        ][
+          if (viral_number = 0) and (distance myself < 0.5) and (probability_of_contagion <= 0.5) and (myself != self)[
+            ask self[
+              set status "infected"
+              set level_of_infection "low"
+              set time_infection 1
+              set previous_medical_condition "none"
+              set viral_number probability_of_contagion
+              ;set label probability_of_contagion
+              set color red
+              ;set label-color yellow
+              ;create-link-with person infected
+              if show-who-infected-who = true [
+                create-link-with person infected
+              ]
+            ]
+          ] 
         ]
       ]
-      let probability_of_healing precision (random-float 1) 2
       
-      if infection_time > dead-to-time [
-        die 
-        set number-of-deaths (number-of-deaths + 1)
+      
+      if ((min-illness-time <= time_infection) or (max-illness-time >= time_infection))[
+        let probability_of_healing precision (random-float 1) 2
+        
+        if (probability_of_healing <= 0.03) and (time_infection > 360) [
+          set status "recovered"
+          set personal-immunity-time immunity-time * 24
+          set color green
+        ]
       ]
       
-      if (probability_of_healing <= 0.5) and (infection_time > 360) [
-        set status "recovered"
-        set color green
+      if time_infection > dead-to-time [
+        set number-of-deaths number-of-deaths + 1
+        die
       ]
+      
+      
     ]
   ]
 end
