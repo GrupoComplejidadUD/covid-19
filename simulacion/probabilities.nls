@@ -1,0 +1,21 @@
+;; This function returns the probability that a person can contagie to another person
+
+to-report probability_of_getting_sick
+  let probability_of_contagion precision (random-float 1) 2
+  report probability_of_contagion
+end
+
+;; This function returns the infection level to assing to a person.
+;; The idea is take a probability to calcule what level should be return.
+to-report assign_infection_level
+  report (py:runresult "functions.assign_infection_level()")
+end
+
+to-report a_new_gender
+  report (py:runresult "functions.genter_probability()")
+end
+
+to-report assign_place_of_care [ infection_level ]
+  let phrase (word "functions.assign_place_of_care(\"" infection_level "\")")
+  report (py:runresult phrase)
+end

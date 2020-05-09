@@ -1,8 +1,10 @@
+extensions [ py array]
+
 breed [ people person ]
 
-globals [ number-of-deaths contagion-memory ]
+globals [ number-of-deaths contagion-memory current-contagion number-contagion]
 
-__includes [ "people.nls" ]
+__includes [ "people.nls" "probabilities.nls" ]
 
 people-own[
   age
@@ -20,6 +22,8 @@ people-own[
 ]
 
 to setup
+  py:setup py:python3
+  py:run "from python_files import functions "
   clear-all
   reset-ticks
   set number-of-deaths 0
@@ -31,6 +35,10 @@ end
 to start
   set contagion-memory count people with [status = "infected"]
   step-people
+  set current-contagion count people with [status = "infected"]
+  if (contagion-memory != 0) [
+    set number-contagion (current-contagion - contagion-memory ) / contagion-memory
+  ]
   tick
 end
 @#$#@#$#@
@@ -123,7 +131,7 @@ INPUTBOX
 225
 122
 infected-quantity
-10.0
+30.0
 1
 0
 Number
@@ -202,7 +210,7 @@ min-illness-time
 min-illness-time
 0
 400
-350.0
+356.0
 1
 1
 hours
@@ -265,7 +273,7 @@ SWITCH
 377
 reinfected?
 reinfected?
-0
+1
 1
 -1000
 
@@ -317,7 +325,7 @@ SWITCH
 377
 not-move?
 not-move?
-1
+0
 1
 -1000
 
@@ -330,7 +338,7 @@ dead-to-time
 dead-to-time
 0
 500
-377.0
+500.0
 1
 1
 hours
@@ -345,7 +353,7 @@ immunity-time
 immunity-time
 0
 360
-2.0
+240.0
 1
 1
 Days
@@ -368,9 +376,80 @@ SWITCH
 427
 show-who-infected-who
 show-who-infected-who
-0
+1
 1
 -1000
+
+PLOT
+1491
+187
+1810
+420
+Infection level on people
+NIL
+NIL
+0.0
+10.0
+0.0
+10.0
+true
+true
+"" ""
+PENS
+"asymptomatic" 1.0 0 -1069655 true "" "plot count people with[level_of_infection = \"asymptomatic\"]"
+"mild" 1.0 0 -10899396 true "" "plot count people with[level_of_infection = \"mild\"]"
+"moderate" 1.0 0 -6459832 true "" "plot count people with[level_of_infection = \"moderate\"]"
+"serious" 1.0 0 -2674135 true "" "plot count people with[level_of_infection = \"serious\"]"
+"none" 1.0 0 -11783835 true "" "plot count people with[level_of_infection = \"none\"]"
+
+MONITOR
+1688
+10
+1819
+55
+NIL
+number-contagion
+17
+1
+11
+
+PLOT
+1498
+443
+1812
+668
+Daily number contagion
+NIL
+NIL
+0.0
+10.0
+0.0
+3.0
+true
+false
+"" ""
+PENS
+"default" 1.0 0 -16777216 true "" "plot number-contagion"
+
+TEXTBOX
+17
+469
+167
+553
+Condiciones:\nmundo: 16 x 16\nTotal: 100 personas\nInfectados: 1\nTotal ticks hasta final propagacion: 2550
+11
+0.0
+1
+
+TEXTBOX
+17
+595
+167
+679
+Condiciones \nmundo 32 x 32\ntotal 100 personas\ninfectados 1\ntotal ticks hasta final propagacion 364
+11
+0.0
+1
 
 @#$#@#$#@
 ## WHAT IS IT?

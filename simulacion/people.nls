@@ -2,11 +2,7 @@ to create-uninfected-people
   create-people (population - infected-quantity)[
     let select-gender precision (random-float 1) 2
     
-    ifelse (select-gender < 0.48)[
-      set gender "male"
-    ][
-      set gender "female"
-    ]
+    set gender a_new_gender
     set shape "person"
     set age random 70
     set district (random 19) + 1 
@@ -35,20 +31,15 @@ to create-infected-people
   create-people infected-quantity [
     let select-gender precision (random-float 1) 2
     
-    ifelse (select-gender < 0.48)[
-      set gender "male"
-    ][
-      set gender "female"
-    ]
-    
+    set gender a_new_gender
     set shape "person"
     set age random 70
     set district (random 19) + 1 
     set vulnerability_index 0.2
-    set place_of_care "home"
+    set level_of_infection assign_infection_level
+    set place_of_care assign_place_of_care level_of_infection
     ; set mobility "" I'm not sure what values could have this field
     set status "infected"
-    set level_of_infection "low"
     set time_infection 1
     set previous_medical_condition "none"
     
@@ -68,7 +59,7 @@ end
 to step-people
   infected-people
   ifelse (not-move? = true)[
-    ask people with[status != "infected"] [fd 1]
+    ask people with[place_of_care = "none"] [fd 1]
   ][
     ask people [fd 1]
   ]
@@ -84,25 +75,27 @@ end
 to infected-people
   ask people [
     right (random 360)
-    let infected who
-    ; Rule to infect an agent
     
+    ;; The idea is if the person is infected can infected to other people    
     if (status = "infected")[
+      let infected who
+      ;; Increate the time of infection
       set time_infection time_infection + 1
       
+      ;; Only take in mind the people that is near
       ask people-here[
-        let probability_of_contagion precision (random-float 1) 2
+        let probability_of_contagion probability_of_getting_sick
+        
         ifelse reinfected? = true [
           if (distance myself < 0.5) and (probability_of_contagion <= 0.5) and (myself != self) and (status != "recovered") and (status != "infected")[
             ask self[
               set status "infected"
-              set level_of_infection "low"
+              set level_of_infection assign_infection_level
+              set place_of_care assign_place_of_care level_of_infection
               set time_infection 1
               set previous_medical_condition "none"
               set viral_number probability_of_contagion
-              ;set label probability_of_contagion
               set color red
-              ;set label-color yellow
               if show-who-infected-who = true [
                 create-link-with person infected
               ]
@@ -112,14 +105,12 @@ to infected-people
           if (viral_number = 0) and (distance myself < 0.5) and (probability_of_contagion <= 0.5) and (myself != self)[
             ask self[
               set status "infected"
-              set level_of_infection "low"
+              set level_of_infection assign_infection_level
+              set place_of_care assign_place_of_care level_of_infection
               set time_infection 1
               set previous_medical_condition "none"
               set viral_number probability_of_contagion
-              ;set label probability_of_contagion
               set color red
-              ;set label-color yellow
-              ;create-link-with person infected
               if show-who-infected-who = true [
                 create-link-with person infected
               ]
@@ -135,6 +126,7 @@ to infected-people
         if (probability_of_healing <= 0.03) and (time_infection > 360) [
           set status "recovered"
           set personal-immunity-time immunity-time * 24
+          set level_of_infection "none"
           set color green
         ]
       ]
