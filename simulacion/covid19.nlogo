@@ -19,6 +19,7 @@ people-own[
   previous_medical_condition
   viral_number
   personal-immunity-time
+  latency-time
 ]
 
 to setup
@@ -27,18 +28,21 @@ to setup
   clear-all
   reset-ticks
   set number-of-deaths 0
-  set contagion-memory 0
+  set contagion-memory infected-quantity
   create-uninfected-people
   create-infected-people
 end
 
 to start
-  set contagion-memory count people with [status = "infected"]
+
   step-people
+
   set current-contagion count people with [status = "infected"]
-  if (contagion-memory != 0) [
+  if (contagion-memory != 0)and((ticks mod 24) = 0) [
     set number-contagion (current-contagion - contagion-memory ) / contagion-memory
+    set contagion-memory current-contagion
   ]
+
   tick
 end
 @#$#@#$#@
@@ -105,9 +109,9 @@ NIL
 
 INPUTBOX
 8
-61
-91
-121
+94
+127
+154
 population
 800.0
 1
@@ -115,10 +119,10 @@ population
 Number
 
 SWITCH
-26
-778
-184
-811
+15
+780
+173
+813
 show-age
 show-age
 1
@@ -126,12 +130,12 @@ show-age
 -1000
 
 INPUTBOX
-100
-62
-225
-122
+137
+93
+273
+153
 infected-quantity
-30.0
+1.0
 1
 0
 Number
@@ -180,10 +184,10 @@ count people with [status = \"infected\"]
 11
 
 MONITOR
-1585
-117
-1714
-162
+1584
+116
+1713
+161
 number-of-deaths
 number-of-deaths
 17
@@ -202,30 +206,30 @@ count people with [status = \"recovered\"]
 11
 
 SLIDER
-8
-128
-226
-161
+9
+430
+275
+463
 min-illness-time
 min-illness-time
 0
 400
-356.0
+362.0
 1
 1
 hours
 HORIZONTAL
 
 SLIDER
-8
-170
-225
-203
+9
+472
+274
+505
 max-illness-time
 max-illness-time
 0
 720
-360.0
+364.0
 1
 1
 hours
@@ -247,7 +251,7 @@ true
 false
 "" ""
 PENS
-"default" 1.0 2 -13791810 true "" "plot count people with [time_infection = 1]"
+"default" 1.0 0 -13791810 true "" "plot count people with [time_infection = 1]"
 
 BUTTON
 161
@@ -267,13 +271,13 @@ NIL
 1
 
 SWITCH
-8
-344
-133
-377
+7
+161
+132
+194
 reinfected?
 reinfected?
-1
+0
 1
 -1000
 
@@ -319,10 +323,10 @@ count people with [gender = \"female\"]
 11
 
 SWITCH
-141
-344
-265
-377
+140
+161
+274
+194
 not-move?
 not-move?
 0
@@ -330,10 +334,10 @@ not-move?
 -1000
 
 SLIDER
-7
-211
-225
-244
+8
+513
+275
+546
 dead-to-time
 dead-to-time
 0
@@ -345,10 +349,10 @@ hours
 HORIZONTAL
 
 SLIDER
-8
-297
-226
-330
+10
+583
+275
+616
 immunity-time
 immunity-time
 0
@@ -360,20 +364,20 @@ Days
 HORIZONTAL
 
 TEXTBOX
-8
-265
-264
-284
+11
+555
+267
+574
 Warning: Immunity time is on DAYS scale
 12
 15.0
 1
 
 SWITCH
-11
-394
-221
-427
+9
+348
+274
+381
 show-who-infected-who
 show-who-infected-who
 1
@@ -403,10 +407,10 @@ PENS
 "none" 1.0 0 -11783835 true "" "plot count people with[level_of_infection = \"none\"]"
 
 MONITOR
-1688
-10
-1819
-55
+1678
+12
+1809
+57
 NIL
 number-contagion
 17
@@ -414,10 +418,10 @@ number-contagion
 11
 
 PLOT
-1498
-443
-1812
-668
+1494
+439
+1808
+664
 Daily number contagion
 NIL
 NIL
@@ -432,24 +436,128 @@ PENS
 "default" 1.0 0 -16777216 true "" "plot number-contagion"
 
 TEXTBOX
-17
-469
-167
-553
+1683
+697
+1833
+781
 Condiciones:\nmundo: 16 x 16\nTotal: 100 personas\nInfectados: 1\nTotal ticks hasta final propagacion: 2550
 11
 0.0
 1
 
 TEXTBOX
-17
-595
-167
-679
+1507
+694
+1657
+778
 Condiciones \nmundo 32 x 32\ntotal 100 personas\ninfectados 1\ntotal ticks hasta final propagacion 364
 11
 0.0
 1
+
+INPUTBOX
+12
+626
+277
+686
+latency-period
+48.0
+1
+0
+Number
+
+TEXTBOX
+12
+398
+282
+426
+Agents configuration
+14
+0.0
+1
+
+TEXTBOX
+10
+58
+211
+92
+Simulation configuration
+14
+0.0
+1
+
+SLIDER
+7
+204
+275
+237
+min-age-to-go-outside
+min-age-to-go-outside
+0
+100
+18.0
+1
+1
+ages
+HORIZONTAL
+
+SLIDER
+7
+248
+274
+281
+max-age-to-go-outside
+max-age-to-go-outside
+0
+100
+60.0
+1
+1
+ages
+HORIZONTAL
+
+SWITCH
+9
+297
+126
+330
+rule-ages
+rule-ages
+0
+1
+-1000
+
+TEXTBOX
+135
+293
+285
+335
+This rule allow that people between min age and max age to go outsite
+11
+0.0
+1
+
+MONITOR
+1165
+673
+1260
+718
+Infected male
+count people with [(gender = \"male\") and (status = \"infected\")]
+17
+1
+11
+
+MONITOR
+1277
+673
+1388
+718
+Women infected
+count people with [(gender = \"female\") and (status = \"infected\")]
+17
+1
+11
 
 @#$#@#$#@
 ## WHAT IS IT?
