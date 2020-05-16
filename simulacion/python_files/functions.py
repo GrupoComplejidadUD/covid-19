@@ -1,9 +1,18 @@
 import random
 
 def assign_infection_level():
-    number = int(random.uniform(0, 4))
+    number = random.random()
     levels = ["asymptomatic", "mild", "moderate", "serious"]
-    return levels[number]
+    if (number <= 0.004):
+        x = random.random()
+        if (x <= 0.8):
+            return "moderate"
+        else:
+            return "serious"
+    elif (number <= 0.196):
+        return "mild"
+    else:
+        return "asymptomatic"
 
 def genter_probability():
     # Source https://www.eltiempo.com/bogota/numero-de-habitantes-de-bogota-segun-el-censo-del-dane-384540

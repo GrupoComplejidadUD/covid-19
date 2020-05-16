@@ -30,7 +30,7 @@ to setup
   set number-of-deaths 0
   set contagion-memory infected-quantity
   create-uninfected-people
-  create-infected-people
+  create-infected-people infected-quantity
 end
 
 to start
@@ -49,11 +49,11 @@ end
 GRAPHICS-WINDOW
 290
 10
-1143
-864
+1146
+867
 -1
 -1
-13.0
+13.05
 1
 10
 1
@@ -113,21 +113,10 @@ INPUTBOX
 127
 154
 population
-800.0
+400.0
 1
 0
 Number
-
-SWITCH
-15
-780
-173
-813
-show-age
-show-age
-1
-1
--1000
 
 INPUTBOX
 137
@@ -206,30 +195,30 @@ count people with [status = \"recovered\"]
 11
 
 SLIDER
-9
-430
-275
-463
+8
+479
+274
+512
 min-illness-time
 min-illness-time
 0
 400
-362.0
+360.0
 1
 1
 hours
 HORIZONTAL
 
 SLIDER
-9
-472
-274
-505
+8
+521
+273
+554
 max-illness-time
 max-illness-time
 0
 720
-364.0
+432.0
 1
 1
 hours
@@ -277,7 +266,7 @@ SWITCH
 194
 reinfected?
 reinfected?
-0
+1
 1
 -1000
 
@@ -334,25 +323,25 @@ not-move?
 -1000
 
 SLIDER
-8
-513
-275
-546
+7
+562
+274
+595
 dead-to-time
 dead-to-time
 0
 500
-500.0
+480.0
 1
 1
 hours
 HORIZONTAL
 
 SLIDER
-10
-583
-275
-616
+9
+632
+274
+665
 immunity-time
 immunity-time
 0
@@ -364,10 +353,10 @@ Days
 HORIZONTAL
 
 TEXTBOX
-11
-555
-267
-574
+10
+604
+266
+623
 Warning: Immunity time is on DAYS scale
 12
 15.0
@@ -400,11 +389,10 @@ true
 true
 "" ""
 PENS
-"asymptomatic" 1.0 0 -1069655 true "" "plot count people with[level_of_infection = \"asymptomatic\"]"
+"asymptomatic" 1.0 0 -8630108 true "" "plot count people with[level_of_infection = \"asymptomatic\"]"
 "mild" 1.0 0 -10899396 true "" "plot count people with[level_of_infection = \"mild\"]"
 "moderate" 1.0 0 -6459832 true "" "plot count people with[level_of_infection = \"moderate\"]"
 "serious" 1.0 0 -2674135 true "" "plot count people with[level_of_infection = \"serious\"]"
-"none" 1.0 0 -11783835 true "" "plot count people with[level_of_infection = \"none\"]"
 
 MONITOR
 1678
@@ -456,10 +444,10 @@ Condiciones \nmundo 32 x 32\ntotal 100 personas\ninfectados 1\ntotal ticks hasta
 1
 
 INPUTBOX
-12
-626
-277
-686
+11
+675
+276
+735
 latency-period
 48.0
 1
@@ -467,10 +455,10 @@ latency-period
 Number
 
 TEXTBOX
-12
-398
-282
-426
+11
+447
+281
+475
 Agents configuration
 14
 0.0
@@ -495,7 +483,7 @@ min-age-to-go-outside
 min-age-to-go-outside
 0
 100
-18.0
+20.0
 1
 1
 ages
@@ -510,7 +498,7 @@ max-age-to-go-outside
 max-age-to-go-outside
 0
 100
-60.0
+50.0
 1
 1
 ages
@@ -558,6 +546,23 @@ count people with [(gender = \"female\") and (status = \"infected\")]
 17
 1
 11
+
+BUTTON
+12
+398
+122
+431
+Add infected
+create-infected-people 1
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
 
 @#$#@#$#@
 ## WHAT IS IT?
