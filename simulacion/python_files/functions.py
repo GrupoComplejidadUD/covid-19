@@ -1,8 +1,20 @@
 import random
 
+"""
+assign_infection_level
+
+This function assing the infection level with the next rules:
+    * 80% of all population would sick
+        * 80% of sick people are asymptomatic
+        * 20% of sick are symtomatic
+            * 98% of symtomatic are "mild" and are in home
+            * 2% of symtomatic are in a hospital
+                * 80% are "moderate"
+                * 20% are "serious"
+"""
 def assign_infection_level():
     number = random.random()
-    levels = ["asymptomatic", "mild", "moderate", "serious"]
+    # levels = ["asymptomatic", "mild", "moderate", "serious"]
     if (number <= 0.004):
         x = random.random()
         if (x <= 0.8):

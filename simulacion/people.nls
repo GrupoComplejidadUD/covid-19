@@ -1,7 +1,5 @@
 to create-uninfected-people
   create-people (population - infected-quantity)[
-    let select-gender precision (random-float 1) 2
-    
     set gender a_new_gender
     set shape "person"
     set age random 70
@@ -25,8 +23,6 @@ end
 
 to create-infected-people [quantity]
   create-people quantity [
-    let select-gender precision (random-float 1) 2
-    
     set gender a_new_gender
     set shape "person"
     set age random 70
@@ -75,6 +71,7 @@ to delete-immnunity
     set personal-immunity-time personal-immunity-time - 1
     if (personal-immunity-time <= 0)[
       set status "uninfected"
+      set viral_number 0
       set color white
     ]
   ]
@@ -89,7 +86,7 @@ to infected-people
       let infected who
       ;; Increate the time of infection
       set time_infection time_infection + 1
-      ;; 
+      ;; Probabability of spread someone
       let probability_of_contagion probability_of_getting_sick
       
       ;; Only take in mind the people that is near
@@ -97,27 +94,16 @@ to infected-people
         ;; for each person the probability change
         let probability_of_sick precision (random-float 1) 2
         
-        ifelse reinfected? = true [
-          if (distance myself < 0.5) and (probability_of_sick <= probability_of_contagion) and (myself != self) and (status != "infected") and (status != "recovered")[
-            ask self[
-              infect-person assign_infection_level probability_of_contagion infected
-            ]
-          ] 
-        ][
-          if (viral_number = 0) and (distance myself < 0.5) and (probability_of_contagion <= 0.5) and (myself != self)[
-            ask self[
-              infect-person assign_infection_level probability_of_contagion infected
-            ]
-          ] 
+        if (distance myself < 0.5) and (probability_of_sick <= probability_of_contagion) and (myself != self) and (status != "infected") and (status != "recovered")[
+          ask self[
+            infect-person assign_infection_level probability_of_contagion infected
+          ]
         ]
       ]
       
       healing_person
       
-      if time_infection > dead-to-time [
-        set number-of-deaths number-of-deaths + 1
-        die
-      ] 
+      die_for_not_healing
     ]
     if (latency-time > 0)[ update_time_infection ]
   ]
@@ -144,9 +130,7 @@ end
 
 to healing_person
   if ((min-illness-time <= time_infection) or (max-illness-time >= time_infection))[
-    let probability_of_healing precision (random-float 1) 2
-    
-    if (probability_of_healing <= 0.03) and (time_infection > 360) [
+    if (healing_probability <= 0.03) and (time_infection > 360) [
       set status "recovered"
       set personal-immunity-time immunity-time * 24
       set level_of_infection "none"
@@ -154,4 +138,11 @@ to healing_person
       set color green
     ]
   ]
+end
+
+to die_for_not_healing
+  if time_infection > dead-to-time [
+    set number-of-deaths number-of-deaths + 1
+    die
+  ] 
 end

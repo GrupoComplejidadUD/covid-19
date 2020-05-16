@@ -151,10 +151,10 @@ PENS
 "Recovered" 1.0 0 -4079321 true "" "plot count people with [status = \"recovered\"]"
 
 MONITOR
-1490
-63
-1569
-108
+1495
+12
+1574
+57
 Uninfected
 count people with [status = \"uninfected\"]
 17
@@ -163,9 +163,9 @@ count people with [status = \"uninfected\"]
 
 MONITOR
 1584
-64
+13
 1661
-109
+58
 Infected
 count people with [status = \"infected\"]
 17
@@ -173,10 +173,10 @@ count people with [status = \"infected\"]
 11
 
 MONITOR
-1584
-116
-1713
-161
+1590
+67
+1719
+112
 number-of-deaths
 number-of-deaths
 17
@@ -184,10 +184,10 @@ number-of-deaths
 11
 
 MONITOR
-1491
-118
-1571
-163
+1495
+66
+1575
+111
 Recovered
 count people with [status = \"recovered\"]
 17
@@ -195,10 +195,10 @@ count people with [status = \"recovered\"]
 11
 
 SLIDER
-8
-479
-274
-512
+10
+547
+276
+580
 min-illness-time
 min-illness-time
 0
@@ -210,25 +210,25 @@ hours
 HORIZONTAL
 
 SLIDER
-8
-521
-273
-554
+10
+589
+275
+622
 max-illness-time
 max-illness-time
 0
 720
-432.0
+720.0
 1
 1
 hours
 HORIZONTAL
 
 PLOT
-1161
-188
-1470
-420
+1499
+433
+1808
+626
 Contagions per tick
 NIL
 NIL
@@ -259,22 +259,11 @@ NIL
 NIL
 1
 
-SWITCH
-7
-161
-132
-194
-reinfected?
-reinfected?
-1
-1
--1000
-
 PLOT
-1163
-440
-1469
-662
+1165
+637
+1471
+859
 Per gender
 Ticks
 Count
@@ -290,10 +279,10 @@ PENS
 "Female" 1.0 0 -2674135 true "" "plot count people with[status = \"infected\" and gender = \"female\"]"
 
 MONITOR
-1490
-11
-1569
-56
+14
+449
+93
+494
 Male
 count people with [gender = \"male\"]
 17
@@ -301,10 +290,10 @@ count people with [gender = \"male\"]
 11
 
 MONITOR
-1583
-11
-1659
-56
+106
+449
+182
+494
 Female
 count people with [gender = \"female\"]
 17
@@ -312,36 +301,36 @@ count people with [gender = \"female\"]
 11
 
 SWITCH
-140
-161
-274
-194
+11
+309
+145
+342
 not-move?
 not-move?
-0
+1
 1
 -1000
 
 SLIDER
-7
-562
-274
-595
+9
+630
+276
+663
 dead-to-time
 dead-to-time
 0
-500
-480.0
+1000
+720.0
 1
 1
 hours
 HORIZONTAL
 
 SLIDER
-9
-632
-274
-665
+11
+700
+276
+733
 immunity-time
 immunity-time
 0
@@ -353,20 +342,20 @@ Days
 HORIZONTAL
 
 TEXTBOX
-10
-604
-266
-623
+12
+672
+268
+691
 Warning: Immunity time is on DAYS scale
 12
 15.0
 1
 
 SWITCH
-9
-348
-274
-381
+12
+359
+277
+392
 show-who-infected-who
 show-who-infected-who
 1
@@ -374,10 +363,10 @@ show-who-infected-who
 -1000
 
 PLOT
-1491
-187
-1810
-420
+1161
+186
+1468
+419
 Infection level on people
 NIL
 NIL
@@ -391,14 +380,12 @@ true
 PENS
 "asymptomatic" 1.0 0 -8630108 true "" "plot count people with[level_of_infection = \"asymptomatic\"]"
 "mild" 1.0 0 -10899396 true "" "plot count people with[level_of_infection = \"mild\"]"
-"moderate" 1.0 0 -6459832 true "" "plot count people with[level_of_infection = \"moderate\"]"
-"serious" 1.0 0 -2674135 true "" "plot count people with[level_of_infection = \"serious\"]"
 
 MONITOR
-1678
-12
+1681
+13
 1809
-57
+58
 NIL
 number-contagion
 17
@@ -406,11 +393,11 @@ number-contagion
 11
 
 PLOT
-1494
-439
-1808
-664
-Daily number contagion
+1497
+187
+1811
+420
+Daily average contagion
 NIL
 NIL
 0.0
@@ -424,20 +411,20 @@ PENS
 "default" 1.0 0 -16777216 true "" "plot number-contagion"
 
 TEXTBOX
-1683
-697
-1833
-781
+141
+826
+261
+910
 Condiciones:\nmundo: 16 x 16\nTotal: 100 personas\nInfectados: 1\nTotal ticks hasta final propagacion: 2550
 11
 0.0
 1
 
 TEXTBOX
-1507
-694
-1657
-778
+14
+823
+124
+907
 Condiciones \nmundo 32 x 32\ntotal 100 personas\ninfectados 1\ntotal ticks hasta final propagacion 364
 11
 0.0
@@ -445,9 +432,9 @@ Condiciones \nmundo 32 x 32\ntotal 100 personas\ninfectados 1\ntotal ticks hasta
 
 INPUTBOX
 11
-675
+743
 276
-735
+803
 latency-period
 48.0
 1
@@ -455,10 +442,10 @@ latency-period
 Number
 
 TEXTBOX
-11
-447
-281
-475
+16
+511
+286
+539
 Agents configuration
 14
 0.0
@@ -475,72 +462,72 @@ Simulation configuration
 1
 
 SLIDER
-7
-204
-275
-237
+9
+163
+277
+196
 min-age-to-go-outside
 min-age-to-go-outside
 0
 100
-20.0
+18.0
 1
 1
 ages
 HORIZONTAL
 
 SLIDER
-7
-248
-274
-281
+9
+207
+276
+240
 max-age-to-go-outside
 max-age-to-go-outside
 0
 100
-50.0
+60.0
 1
 1
 ages
 HORIZONTAL
 
 SWITCH
-9
-297
-126
-330
+11
+256
+128
+289
 rule-ages
 rule-ages
-0
+1
 1
 -1000
 
 TEXTBOX
-135
-293
-285
-335
+137
+252
+287
+294
 This rule allow that people between min age and max age to go outsite
 11
 0.0
 1
 
 MONITOR
-1165
-673
-1260
-718
-Infected male
+1617
+126
+1712
+171
+Men Infected
 count people with [(gender = \"male\") and (status = \"infected\")]
 17
 1
 11
 
 MONITOR
-1277
-673
-1388
-718
+1497
+126
+1605
+171
 Women infected
 count people with [(gender = \"female\") and (status = \"infected\")]
 17
@@ -548,10 +535,10 @@ count people with [(gender = \"female\") and (status = \"infected\")]
 11
 
 BUTTON
-12
-398
-122
-431
+13
+403
+116
+436
 Add infected
 create-infected-people 1
 NIL
@@ -563,6 +550,35 @@ NIL
 NIL
 NIL
 1
+
+TEXTBOX
+153
+297
+280
+352
+This rule avoid that cases of confirmed of infected people can move
+11
+0.0
+1
+
+PLOT
+1163
+434
+1472
+626
+Infection Level 2
+NIL
+NIL
+0.0
+10.0
+0.0
+10.0
+true
+true
+"" ""
+PENS
+"moderate" 1.0 0 -8431303 true "" "plot count people with[level_of_infection = \"moderate\"]"
+"Serious" 1.0 0 -2674135 true "" "plot count people with[level_of_infection = \"serious\"]"
 
 @#$#@#$#@
 ## WHAT IS IT?

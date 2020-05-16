@@ -19,3 +19,8 @@ to-report assign_place_of_care [ infection_level ]
   let phrase (word "functions.assign_place_of_care(\"" infection_level "\")")
   report (py:runresult phrase)
 end
+
+to-report healing_probability
+  let probability_of_healing precision (random-float 1) 2
+  report probability_of_healing
+end
