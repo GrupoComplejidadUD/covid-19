@@ -1,0 +1,13 @@
+count people with [gender = "male"]
+count people with [gender = "female"]
+count people with [status = "uninfected"]
+count people with [status = "infected"]
+number-contagion
+count people with [(gender = "female") and (status = "infected")]
+count people with [(gender = "male") and (status = "infected")]
+count people with[level_of_infection = "mild"]
+count people with[level_of_infection = "moderate"]
+count people with[level_of_infection = "serious"]
+count people with[level_of_infection = "asymptomatic"]
+count people with [status = "recovered"]
+number-of-deaths

@@ -7,9 +7,9 @@ end
 
 ;; This function returns the infection level to assing to a person.
 ;; The idea is take a probability to calcule what level should be return.
-to-report assign_infection_level
-  report (py:runresult "functions.assign_infection_level()")
-end
+;;to-report assign_infection_level
+;;  report (py:runresult "functions.assign_infection_level()")
+;;end
 
 to-report a_new_gender
   report (py:runresult "functions.genter_probability()")
@@ -23,4 +23,23 @@ end
 to-report healing_probability
   let probability_of_healing precision (random-float 1) 2
   report probability_of_healing
+end
+
+to-report age_probability
+  report (py:runresult "functions.age_probability()")
+end
+
+to-report illness_evolution [ infection_level time ]
+  let phrase (word "functions.illness_evolution(\"" infection_level "\", " time ")")
+  report (py:runresult phrase)
+end
+
+to-report min-time-infection-level [ infection_level ]
+  let phrase (word "functions.min_time_infection(\"" infection_level "\")")
+  report (py:runresult phrase)
+end
+
+to-report max-time-infection-level [ infection_level ]
+  let phrase (word "functions.max_time_infection(\"" infection_level "\")")
+  report (py:runresult phrase)
 end

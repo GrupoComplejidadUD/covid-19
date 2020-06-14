@@ -20,6 +20,7 @@ people-own[
   viral_number
   personal-immunity-time
   latency-time
+  infected_someone
 ]
 
 to setup
@@ -39,18 +40,23 @@ to start
 
   set current-contagion count people with [status = "infected"]
   if (contagion-memory != 0)and((ticks mod 24) = 0) [
-    set number-contagion (current-contagion - contagion-memory ) / contagion-memory
-    set contagion-memory current-contagion
+    let calculate-contagion (current-contagion - contagion-memory ) / contagion-memory
+    if (calculate-contagion > 0)[
+      set number-contagion calculate-contagion
+      set contagion-memory current-contagion
+    ]
   ]
 
+  if (stop-condition? = true and time-stop = ticks)[ stop ]
+  if ((count people with [status = "infected"]) = 0)[ stop ]
   tick
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
 290
 10
-1146
-867
+728
+449
 -1
 -1
 13.05
@@ -63,10 +69,10 @@ GRAPHICS-WINDOW
 1
 1
 1
--32
-32
--32
-32
+-16
+16
+-16
+16
 0
 0
 1
@@ -108,23 +114,23 @@ NIL
 1
 
 INPUTBOX
-8
-94
-127
-154
+9
+166
+128
+226
 population
-400.0
+529.0
 1
 0
 Number
 
 INPUTBOX
-137
-93
-273
-153
+138
+165
+274
+225
 infected-quantity
-1.0
+3.0
 1
 0
 Number
@@ -194,41 +200,11 @@ count people with [status = \"recovered\"]
 1
 11
 
-SLIDER
-10
-547
-276
-580
-min-illness-time
-min-illness-time
-0
-400
-360.0
-1
-1
-hours
-HORIZONTAL
-
-SLIDER
-10
-589
-275
-622
-max-illness-time
-max-illness-time
-0
-720
-720.0
-1
-1
-hours
-HORIZONTAL
-
 PLOT
 1499
-433
+680
 1808
-626
+873
 Contagions per tick
 NIL
 NIL
@@ -279,10 +255,10 @@ PENS
 "Female" 1.0 0 -2674135 true "" "plot count people with[status = \"infected\" and gender = \"female\"]"
 
 MONITOR
-14
-449
-93
-494
+16
+589
+95
+634
 Male
 count people with [gender = \"male\"]
 17
@@ -290,10 +266,10 @@ count people with [gender = \"male\"]
 11
 
 MONITOR
-106
-449
-182
-494
+108
+589
+184
+634
 Female
 count people with [gender = \"female\"]
 17
@@ -301,36 +277,21 @@ count people with [gender = \"female\"]
 11
 
 SWITCH
-11
-309
-145
-342
+12
+381
+146
+414
 not-move?
 not-move?
-1
+0
 1
 -1000
 
 SLIDER
-9
-630
-276
-663
-dead-to-time
-dead-to-time
-0
-1000
-720.0
-1
-1
-hours
-HORIZONTAL
-
-SLIDER
-11
-700
-276
-733
+16
+711
+281
+744
 immunity-time
 immunity-time
 0
@@ -342,20 +303,20 @@ Days
 HORIZONTAL
 
 TEXTBOX
-12
-672
-268
-691
+17
+683
+273
+702
 Warning: Immunity time is on DAYS scale
 12
 15.0
 1
 
 SWITCH
-12
-359
-277
-392
+14
+499
+279
+532
 show-who-infected-who
 show-who-infected-who
 1
@@ -394,9 +355,9 @@ number-contagion
 
 PLOT
 1497
-187
+434
 1811
-420
+667
 Daily average contagion
 NIL
 NIL
@@ -411,30 +372,30 @@ PENS
 "default" 1.0 0 -16777216 true "" "plot number-contagion"
 
 TEXTBOX
-141
-826
-261
-910
+1955
+89
+2075
+173
 Condiciones:\nmundo: 16 x 16\nTotal: 100 personas\nInfectados: 1\nTotal ticks hasta final propagacion: 2550
 11
 0.0
 1
 
 TEXTBOX
-14
-823
-124
-907
+1828
+86
+1938
+170
 Condiciones \nmundo 32 x 32\ntotal 100 personas\ninfectados 1\ntotal ticks hasta final propagacion 364
 11
 0.0
 1
 
 INPUTBOX
-11
-743
-276
-803
+16
+754
+281
+814
 latency-period
 48.0
 1
@@ -442,30 +403,30 @@ latency-period
 Number
 
 TEXTBOX
-16
-511
-286
-539
+18
+651
+288
+679
 Agents configuration
 14
 0.0
 1
 
 TEXTBOX
-10
-58
-211
-92
+11
+130
+212
+164
 Simulation configuration
 14
 0.0
 1
 
 SLIDER
-9
-163
-277
-196
+10
+235
+278
+268
 min-age-to-go-outside
 min-age-to-go-outside
 0
@@ -477,36 +438,36 @@ ages
 HORIZONTAL
 
 SLIDER
-9
-207
-276
-240
+10
+279
+277
+312
 max-age-to-go-outside
 max-age-to-go-outside
 0
 100
-60.0
+70.0
 1
 1
 ages
 HORIZONTAL
 
 SWITCH
-11
-256
-128
-289
+12
+328
+129
+361
 rule-ages
 rule-ages
-1
+0
 1
 -1000
 
 TEXTBOX
-137
-252
-287
-294
+138
+324
+288
+366
 This rule allow that people between min age and max age to go outsite
 11
 0.0
@@ -535,10 +496,10 @@ count people with [(gender = \"female\") and (status = \"infected\")]
 11
 
 BUTTON
-13
-403
-116
-436
+15
+543
+118
+576
 Add infected
 create-infected-people 1
 NIL
@@ -552,10 +513,10 @@ NIL
 1
 
 TEXTBOX
-153
-297
-280
-352
+154
+369
+281
+424
 This rule avoid that cases of confirmed of infected people can move
 11
 0.0
@@ -579,6 +540,103 @@ true
 PENS
 "moderate" 1.0 0 -8431303 true "" "plot count people with[level_of_infection = \"moderate\"]"
 "Serious" 1.0 0 -2674135 true "" "plot count people with[level_of_infection = \"serious\"]"
+
+MONITOR
+1508
+235
+1587
+280
+count mild
+count people with[level_of_infection = \"mild\"]
+17
+1
+11
+
+MONITOR
+1606
+235
+1717
+280
+count moderate
+count people with[level_of_infection = \"moderate\"]
+17
+1
+11
+
+MONITOR
+1509
+297
+1610
+342
+Count serious
+count people with[level_of_infection = \"serious\"]
+17
+1
+11
+
+MONITOR
+1625
+296
+1764
+341
+count asymptomatic
+count people with[level_of_infection = \"asymptomatic\"]
+17
+1
+11
+
+TEXTBOX
+1829
+13
+1979
+31
+Transmisión comunitaria
+12
+0.0
+1
+
+INPUTBOX
+13
+426
+162
+486
+patch-meters
+4.0
+1
+0
+Number
+
+TEXTBOX
+168
+438
+318
+480
+1 patch -> 4 m so the maximum distance of contagion is 0.5 patch
+11
+0.0
+1
+
+INPUTBOX
+12
+60
+85
+120
+time-stop
+168.0
+1
+0
+Number
+
+SWITCH
+103
+61
+259
+94
+stop-condition?
+stop-condition?
+1
+1
+-1000
 
 @#$#@#$#@
 ## WHAT IS IT?
@@ -926,6 +984,53 @@ NetLogo 6.1.1
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
+<experiments>
+  <experiment name="caso1" repetitions="5" runMetricsEveryStep="true">
+    <setup>setup</setup>
+    <go>start</go>
+    <exitCondition>(count people with [status = "infected"]) = 0</exitCondition>
+    <metric>count people with [gender = "male"]</metric>
+    <metric>count people with [gender = "female"]</metric>
+    <metric>count people with [status = "uninfected"]</metric>
+    <metric>count people with [status = "infected"]</metric>
+    <metric>number-contagion</metric>
+    <metric>count people with [(gender = "female") and (status = "infected")]</metric>
+    <metric>count people with [(gender = "male") and (status = "infected")]</metric>
+    <metric>count people with[level_of_infection = "mild"]</metric>
+    <metric>count people with[level_of_infection = "moderate"]</metric>
+    <metric>count people with[level_of_infection = "serious"]</metric>
+    <metric>count people with[level_of_infection = "asymptomatic"]</metric>
+    <metric>count people with [status = "recovered"]</metric>
+    <metric>number-of-deaths</metric>
+    <enumeratedValueSet variable="rule-ages">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="latency-period">
+      <value value="48"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="not-move?">
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="min-age-to-go-outside">
+      <value value="18"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="infected-quantity">
+      <value value="1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="population">
+      <value value="400"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="max-age-to-go-outside">
+      <value value="60"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="immunity-time">
+      <value value="240"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="show-who-infected-who">
+      <value value="false"/>
+    </enumeratedValueSet>
+  </experiment>
+</experiments>
 @#$#@#$#@
 @#$#@#$#@
 default

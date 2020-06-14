@@ -2,7 +2,7 @@ to create-uninfected-people
   create-people (population - infected-quantity)[
     set gender a_new_gender
     set shape "person"
-    set age random 70
+    set age age_probability
     set district (random 19) + 1 
     set vulnerability_index 0.2
     
@@ -18,6 +18,7 @@ to create-uninfected-people
     set ycor random-ycor
     set viral_number 0
     set latency-time 0
+    set infected_someone false
   ]
 end
 
@@ -25,10 +26,10 @@ to create-infected-people [quantity]
   create-people quantity [
     set gender a_new_gender
     set shape "person"
-    set age random 70
+    set age age_probability
     set district (random 19) + 1 
     set vulnerability_index 0.2
-    set level_of_infection assign_infection_level
+    set level_of_infection "asymptomatic"
     set place_of_care assign_place_of_care level_of_infection
     ; set mobility "" I'm not sure what values could have this field
     set status "infected"
@@ -41,6 +42,7 @@ to create-infected-people [quantity]
     set ycor random-ycor
     set viral_number 1
     set latency-time latency-period
+    set infected_someone false
   ]
 end
 
@@ -86,38 +88,41 @@ to infected-people
       let infected who
       ;; Increate the time of infection
       set time_infection time_infection + 1
-      ;; Probabability of spread someone
-      let probability_of_contagion probability_of_getting_sick
-      
+            
       ;; Only take in mind the people that is near
       ask people-here[
-        ;; for each person the probability change
-        let probability_of_sick precision (random-float 1) 2
-        
-        if (distance myself < 0.5) and (probability_of_sick <= probability_of_contagion) and (myself != self) and (status != "infected") and (status != "recovered")[
+        let max_distance 2 / patch-meters
+        if (distance myself <= max_distance) and (myself != self) and (status != "infected") and (status != "recovered")[
           ask self[
-            infect-person assign_infection_level probability_of_contagion infected
+            infect-person infected
           ]
         ]
       ]
-      
-      healing_person
-      
+      ;; Update status of illness
+      set level_of_infection illness_evolution level_of_infection time_infection
+      ;; Update place of care
+      set place_of_care assign_place_of_care level_of_infection
+      ;; Evaluate if healing person
+      healing_person 
+      ;; Evaluate if person die 
       die_for_not_healing
+      
+      
     ]
     if (latency-time > 0)[ update_time_infection ]
   ]
 end
 
-to infect-person[assign_infection_level probability_of_contagion infected]
+to infect-person[ infected]
   set status "infected"
-  set level_of_infection assign_infection_level
+  set level_of_infection "asymptomatic"
   set place_of_care assign_place_of_care level_of_infection
   set time_infection 1
   set previous_medical_condition "none"
-  set viral_number probability_of_contagion
+  set viral_number 1
   set color red
   set latency-time latency-period
+  set infected_someone false
   if show-who-infected-who = true [
     create-link-with person infected
   ]
@@ -129,19 +134,19 @@ to update_time_infection
 end
 
 to healing_person
-  if ((min-illness-time <= time_infection) or (max-illness-time >= time_infection))[
-    if (healing_probability <= 0.03) and (time_infection > 360) [
+  if ((max-time-infection-level level_of_infection) <= time_infection)[
       set status "recovered"
       set personal-immunity-time immunity-time * 24
       set level_of_infection "none"
       set place_of_care "none"
       set color green
-    ]
   ]
 end
 
 to die_for_not_healing
-  if time_infection > dead-to-time [
+  let probability_die random-float 1 
+  
+  if ((level_of_infection = "serious") and (probability_die <= 0.0003)) [
     set number-of-deaths number-of-deaths + 1
     die
   ] 
