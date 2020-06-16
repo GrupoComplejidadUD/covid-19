@@ -2,7 +2,7 @@ extensions [ py array]
 
 breed [ people person ]
 
-globals [ number-of-deaths contagion-memory current-contagion number-contagion]
+globals [ number-of-deaths contagion-memory current-contagion number-contagion count_men count_women count_uninfected count_infected count_infected_women count_infected_men count_mild count_moderate count_serious count_asymptomatic count_recovered confirmed_cases]
 
 __includes [ "people.nls" "probabilities.nls" ]
 
@@ -49,7 +49,26 @@ to start
 
   if (stop-condition? = true and time-stop = ticks)[ stop ]
   if ((count people with [status = "infected"]) = 0)[ stop ]
+  ;; Assign ouputs
+  outputs
+
+  ;; increate time
   tick
+end
+
+to outputs
+  set count_men count people with [gender = "male"]
+  set count_women count people with [gender = "female"]
+  set count_uninfected count people with [status = "uninfected"]
+  set count_infected count people with [status = "infected"]
+  set count_infected_women count people with [(gender = "female") and (status = "infected")]
+  set count_infected_men count people with [(gender = "male") and (status = "infected")]
+  set count_mild count people with[level_of_infection = "mild"]
+  set count_moderate count people with[level_of_infection = "moderate"]
+  set count_serious count people with[level_of_infection = "serious"]
+  set count_asymptomatic count people with[level_of_infection = "asymptomatic"]
+  set count_recovered count people with [status = "recovered"]
+  set confirmed_cases count_mild + count_moderate + count_serious
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -201,10 +220,10 @@ count people with [status = \"recovered\"]
 11
 
 PLOT
-1499
-680
-1808
-873
+1497
+621
+1806
+841
 Contagions per tick
 NIL
 NIL
@@ -236,10 +255,10 @@ NIL
 1
 
 PLOT
-1165
-637
-1471
-859
+1161
+619
+1467
+841
 Per gender
 Ticks
 Count
@@ -324,10 +343,10 @@ show-who-infected-who
 -1000
 
 PLOT
-1161
-186
-1468
-419
+1159
+180
+1466
+413
 Infection level on people
 NIL
 NIL
@@ -354,10 +373,10 @@ number-contagion
 11
 
 PLOT
-1497
-434
-1811
-667
+1495
+421
+1809
+611
 Daily average contagion
 NIL
 NIL
@@ -372,20 +391,20 @@ PENS
 "default" 1.0 0 -16777216 true "" "plot number-contagion"
 
 TEXTBOX
-1955
-89
-2075
-173
+1983
+507
+2103
+591
 Condiciones:\nmundo: 16 x 16\nTotal: 100 personas\nInfectados: 1\nTotal ticks hasta final propagacion: 2550
 11
 0.0
 1
 
 TEXTBOX
-1828
-86
-1938
-170
+1856
+504
+1966
+588
 Condiciones \nmundo 32 x 32\ntotal 100 personas\ninfectados 1\ntotal ticks hasta final propagacion 364
 11
 0.0
@@ -446,7 +465,7 @@ max-age-to-go-outside
 max-age-to-go-outside
 0
 100
-70.0
+60.0
 1
 1
 ages
@@ -523,10 +542,10 @@ This rule avoid that cases of confirmed of infected people can move
 1
 
 PLOT
-1163
-434
-1472
-626
+1159
+420
+1468
+612
 Infection Level 2
 NIL
 NIL
@@ -542,10 +561,10 @@ PENS
 "Serious" 1.0 0 -2674135 true "" "plot count people with[level_of_infection = \"serious\"]"
 
 MONITOR
-1508
-235
-1587
-280
+1826
+13
+1905
+58
 count mild
 count people with[level_of_infection = \"mild\"]
 17
@@ -553,10 +572,10 @@ count people with[level_of_infection = \"mild\"]
 11
 
 MONITOR
-1606
-235
-1717
-280
+1924
+13
+2035
+58
 count moderate
 count people with[level_of_infection = \"moderate\"]
 17
@@ -564,10 +583,10 @@ count people with[level_of_infection = \"moderate\"]
 11
 
 MONITOR
-1509
-297
-1610
-342
+1827
+65
+1928
+110
 Count serious
 count people with[level_of_infection = \"serious\"]
 17
@@ -575,10 +594,10 @@ count people with[level_of_infection = \"serious\"]
 11
 
 MONITOR
-1625
-296
-1764
-341
+1943
+64
+2082
+109
 count asymptomatic
 count people with[level_of_infection = \"asymptomatic\"]
 17
@@ -586,10 +605,10 @@ count people with[level_of_infection = \"asymptomatic\"]
 11
 
 TEXTBOX
-1829
-13
-1979
-31
+1857
+431
+2007
+449
 Transmisión comunitaria
 12
 0.0
@@ -622,7 +641,7 @@ INPUTBOX
 85
 120
 time-stop
-168.0
+96.0
 1
 0
 Number
@@ -637,6 +656,35 @@ stop-condition?
 1
 1
 -1000
+
+PLOT
+1497
+180
+1808
+412
+Confirmed Cases
+NIL
+NIL
+0.0
+10.0
+0.0
+10.0
+true
+false
+"" ""
+PENS
+"cases" 1.0 0 -2674135 true "" "plot confirmed_cases"
+
+MONITOR
+1720
+126
+1839
+171
+Confirmed Cases
+confirmed_cases
+17
+1
+11
 
 @#$#@#$#@
 ## WHAT IS IT?
@@ -985,23 +1033,24 @@ NetLogo 6.1.1
 @#$#@#$#@
 @#$#@#$#@
 <experiments>
-  <experiment name="caso1" repetitions="5" runMetricsEveryStep="true">
+  <experiment name="caso1" repetitions="1" runMetricsEveryStep="true">
     <setup>setup</setup>
     <go>start</go>
     <exitCondition>(count people with [status = "infected"]) = 0</exitCondition>
-    <metric>count people with [gender = "male"]</metric>
-    <metric>count people with [gender = "female"]</metric>
-    <metric>count people with [status = "uninfected"]</metric>
-    <metric>count people with [status = "infected"]</metric>
     <metric>number-contagion</metric>
-    <metric>count people with [(gender = "female") and (status = "infected")]</metric>
-    <metric>count people with [(gender = "male") and (status = "infected")]</metric>
-    <metric>count people with[level_of_infection = "mild"]</metric>
-    <metric>count people with[level_of_infection = "moderate"]</metric>
-    <metric>count people with[level_of_infection = "serious"]</metric>
-    <metric>count people with[level_of_infection = "asymptomatic"]</metric>
-    <metric>count people with [status = "recovered"]</metric>
     <metric>number-of-deaths</metric>
+    <metric>count_men</metric>
+    <metric>count_women</metric>
+    <metric>count_uninfected</metric>
+    <metric>count_infected</metric>
+    <metric>count_infected_women</metric>
+    <metric>count_infected_men</metric>
+    <metric>count_mild</metric>
+    <metric>count_moderate</metric>
+    <metric>count_serious</metric>
+    <metric>count_asymptomatic</metric>
+    <metric>count_recovered</metric>
+    <metric>confirmed_cases</metric>
     <enumeratedValueSet variable="rule-ages">
       <value value="true"/>
     </enumeratedValueSet>
@@ -1015,10 +1064,10 @@ NetLogo 6.1.1
       <value value="18"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="infected-quantity">
-      <value value="1"/>
+      <value value="3"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="population">
-      <value value="400"/>
+      <value value="529"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="max-age-to-go-outside">
       <value value="60"/>
@@ -1027,6 +1076,9 @@ NetLogo 6.1.1
       <value value="240"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="show-who-infected-who">
+      <value value="false"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="stop-condition?">
       <value value="false"/>
     </enumeratedValueSet>
   </experiment>

@@ -84,32 +84,33 @@ to infected-people
     right (random 360)
     
     ;; The idea is if the person is infected can infected to other people    
-    if (status = "infected") and (latency-time = 0)[
-      let infected who
-      ;; Increate the time of infection
-      set time_infection time_infection + 1
-            
-      ;; Only take in mind the people that is near
-      ask people-here[
-        let max_distance 2 / patch-meters
-        if (distance myself <= max_distance) and (myself != self) and (status != "infected") and (status != "recovered")[
-          ask self[
-            infect-person infected
+    if (status = "infected")[
+      if (latency-time = 0)[
+        let infected who
+        ;; Increate the time of infection
+        set time_infection time_infection + 1
+        
+        ;; Only take in mind the people that is near
+        ask people-here[
+          let max_distance 2 / patch-meters
+          if (distance myself <= max_distance) and (myself != self) and (status != "infected") and (status != "recovered")[
+            ask self[
+              infect-person infected
+            ]
           ]
         ]
+        ;; Evaluate if healing person
+        healing_person 
+        ;; Evaluate if person die 
+        die_for_not_healing
       ]
       ;; Update status of illness
       set level_of_infection illness_evolution level_of_infection time_infection
       ;; Update place of care
       set place_of_care assign_place_of_care level_of_infection
-      ;; Evaluate if healing person
-      healing_person 
-      ;; Evaluate if person die 
-      die_for_not_healing
-      
-      
     ]
-    if (latency-time > 0)[ update_time_infection ]
+    
+    update_time_infection
   ]
 end
 
@@ -129,12 +130,12 @@ to infect-person[ infected]
 end
 
 to update_time_infection
-  set latency-time latency-time - 1
+  if (latency-time > 0)[ set latency-time latency-time - 1 ]
   set time_infection time_infection + 1
 end
 
 to healing_person
-  if ((max-time-infection-level level_of_infection) <= time_infection)[
+  if ((min-time-infection-level level_of_infection) <= time_infection)[
       set status "recovered"
       set personal-immunity-time immunity-time * 24
       set level_of_infection "none"
