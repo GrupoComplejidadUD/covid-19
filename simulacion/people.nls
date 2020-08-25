@@ -71,7 +71,7 @@ end
 to delete-immnunity
   ask people with[status = "recovered"] [
     set personal-immunity-time personal-immunity-time - 1
-    if (personal-immunity-time <= 0)[
+    if (personal-immunity-time = 0)[
       set status "uninfected"
       set viral_number 0
       set color white
@@ -85,22 +85,22 @@ to infected-people
     
     ;; The idea is if the person is infected can infected to other people    
     if (status = "infected")[
+      update_time_infection
+      
       if (latency-time = 0)[
         let infected who
-        ;; Increate the time of infection
-        set time_infection time_infection + 1
         
         ;; Only take in mind the people that is near
-        ask people-here[
+        ask people-here with [status = "uninfected"][
           let max_distance 2 / patch-meters
-          if (distance myself <= max_distance) and (myself != self) and (status != "infected") and (status != "recovered")[
+          if (distance myself <= max_distance) and (myself != self)[
             ask self[
               infect-person infected
             ]
           ]
         ]
         ;; Evaluate if healing person
-        healing_person 
+        healing_person
         ;; Evaluate if person die 
         die_for_not_healing
       ]
@@ -109,8 +109,6 @@ to infected-people
       ;; Update place of care
       set place_of_care assign_place_of_care level_of_infection
     ]
-    
-    update_time_infection
   ]
 end
 
@@ -135,20 +133,25 @@ to update_time_infection
 end
 
 to healing_person
-  if ((min-time-infection-level level_of_infection) <= time_infection)[
-      set status "recovered"
-      set personal-immunity-time immunity-time * 24
-      set level_of_infection "none"
-      set place_of_care "none"
-      set color green
+  if (((healing_probability time_infection) = "recovered") and ((min-time-infection-level level_of_infection) <= time_infection))[
+    set status "recovered"
+    set personal-immunity-time immunity-time * 24
+    set level_of_infection "none"
+    set place_of_care "none"
+    set time_infection 0 
+    set color green
   ]
 end
 
 to die_for_not_healing
   let probability_die random-float 1 
   
-  if ((level_of_infection = "serious") and (probability_die <= 0.0003)) [
+  if ((level_of_infection = "serious") and ((die_probability time_infection) = "die" )) [
     set number-of-deaths number-of-deaths + 1
     die
   ] 
+end
+
+to add_infected_people
+  create-infected-people 1
 end

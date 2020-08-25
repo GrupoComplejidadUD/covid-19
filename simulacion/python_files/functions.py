@@ -1,34 +1,60 @@
 import random
 """
 illness_evolution evaluate the evolution of infection through the time
+source: http://saludata.saludcapital.gov.co/osb/index.php/datos-de-salud/enfermedades-trasmisibles/covid19/ 
+for 20-june-2020
 """
 def illness_evolution(infection_level, time_infection):
     if ((time_infection % 24) == 0):
         if infection_level == "asymptomatic":
             x = random.random()
-            probability = time_infection * 0.00595238
+            probability = time_infection * 0.00290178571428571
             if (x <= probability):
                 return "mild"
             else:
                 return "asymptomatic"
         elif infection_level == "mild":
             x = random.random()
-            if (x <= 0.138):
-                return "moderate"
+            probability = time_infection * 0.000148229
+            if ((probability <= 0.05) and (x <= probability)):
+                return "severe"
             else:
                 return "mild"
-        elif infection_level == "moderate":
+        elif infection_level == "severe":
             x = random.random()
-            if (x <= 0.061):
-                return "serious"
+            probability = time_infection * 7.89933E-06
+            if ((probability <= 0.008) and (x <= probability)):
+                return "critical"
             else:
-                return "moderate"
-        elif infection_level == "serious":
-            return "serious"
+                return "severe"
+        elif infection_level == "critical":
+            return "critical"
         else:
             return "asymptomatic"
     else:
         return infection_level
+
+"""
+healing_evolution
+The idea with this function is multiply the probability to heal per hour and
+compare with a random number, if it's less or equal the person update his
+status to recoved, else continue like infected.
+"""
+def healing_evolution(time_infection):
+    x = random.random()
+    probability = time_infection * 0.000313844
+    if x <= probability:
+        return "recovered"
+    else:
+        return "infected"
+
+def die_evolucion(time_infection):
+    x = random.random()
+    probability = time_infection * 1.73863E-05
+    if x <= probability:
+        return "die"
+    else:
+        return "alive"
 
 def genter_probability():
     # Source https://www.eltiempo.com/bogota/numero-de-habitantes-de-bogota-segun-el-censo-del-dane-384540
@@ -47,15 +73,15 @@ Parameters:
     * infection_level: Infection level assing to the agent
 Returns:
     * home: When the infection_level is mild
-    * hospital: When the infection_level is moderate
-    * ICU: When the infection_level is serious the person is send to ICU
+    * hospital: When the infection_level is severe
+    * ICU: When the infection_level is critical the person is send to ICU
 """
 def assign_place_of_care(infection_level):
     if infection_level == "mild":
         return "home"
-    elif infection_level == "moderate":
+    elif infection_level == "severe":
         return "hospital"
-    elif infection_level == "serious":
+    elif infection_level == "critical":
         return "ICU" # UCI in spanish
     else:
         return "none"
@@ -109,9 +135,9 @@ It returns the minimum time o infection in hours
 def min_time_infection(infection_level):
     if infection_level == "mild":
         return weeks_to_hours(2)
-    elif infection_level == "moderate":
+    elif infection_level == "severe":
         return weeks_to_hours(3)
-    elif infection_level == "serious":
+    elif infection_level == "critical":
         return weeks_to_hours(6)
     else:
         return weeks_to_hours(2)
@@ -119,9 +145,9 @@ def min_time_infection(infection_level):
 def max_time_infection(infection_level):
     if infection_level == "mild":
         return weeks_to_hours(2)
-    elif infection_level == "moderate":
+    elif infection_level == "severe":
         return weeks_to_hours(6)
-    elif infection_level == "serious":
+    elif infection_level == "critical":
         return weeks_to_hours(8)
     else:
         return weeks_to_hours(2)

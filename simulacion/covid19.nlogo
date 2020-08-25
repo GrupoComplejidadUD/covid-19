@@ -35,7 +35,7 @@ to setup
 end
 
 to start
-
+  if ((count people with [status = "infected"]) = 0)[ stop ]
   step-people
 
   set current-contagion count people with [status = "infected"]
@@ -46,11 +46,10 @@ to start
       set contagion-memory current-contagion
     ]
   ]
-
-  if (stop-condition? = true and time-stop = ticks)[ stop ]
-  if ((count people with [status = "infected"]) = 0)[ stop ]
   ;; Assign ouputs
   outputs
+
+  if (stop-condition? = true and time-stop = ticks)[ stop ]
 
   ;; increate time
   tick
@@ -64,9 +63,9 @@ to outputs
   set count_infected_women count people with [(gender = "female") and (status = "infected")]
   set count_infected_men count people with [(gender = "male") and (status = "infected")]
   set count_mild count people with[level_of_infection = "mild"]
-  set count_moderate count people with[level_of_infection = "moderate"]
-  set count_serious count people with[level_of_infection = "serious"]
-  set count_asymptomatic count people with[level_of_infection = "asymptomatic"]
+  set count_moderate count people with[level_of_infection = "severe"]
+  set count_serious count people with[level_of_infection = "critical"]
+  set count_asymptomatic count people with[level_of_infection = "asymptomatic" and status = "infected"]
   set count_recovered count people with [status = "recovered"]
   set confirmed_cases count_mild + count_moderate + count_serious
 end
@@ -74,8 +73,8 @@ end
 GRAPHICS-WINDOW
 290
 10
-728
-449
+727
+448
 -1
 -1
 13.05
@@ -358,7 +357,7 @@ true
 true
 "" ""
 PENS
-"asymptomatic" 1.0 0 -8630108 true "" "plot count people with[level_of_infection = \"asymptomatic\"]"
+"asymptomatic" 1.0 0 -8630108 true "" "plot count people with[level_of_infection = \"asymptomatic\" and status = \"infected\"]"
 "mild" 1.0 0 -10899396 true "" "plot count people with[level_of_infection = \"mild\"]"
 
 MONITOR
@@ -520,7 +519,7 @@ BUTTON
 118
 576
 Add infected
-create-infected-people 1
+;add_infected_people
 NIL
 1
 T
@@ -557,8 +556,8 @@ true
 true
 "" ""
 PENS
-"moderate" 1.0 0 -8431303 true "" "plot count people with[level_of_infection = \"moderate\"]"
-"Serious" 1.0 0 -2674135 true "" "plot count people with[level_of_infection = \"serious\"]"
+"Severe" 1.0 0 -8431303 true "" "plot count people with[level_of_infection = \"severe\"]"
+"Critical" 1.0 0 -2674135 true "" "plot count people with[level_of_infection = \"critical\"]"
 
 MONITOR
 1826
@@ -577,7 +576,7 @@ MONITOR
 2035
 58
 count moderate
-count people with[level_of_infection = \"moderate\"]
+count people with[level_of_infection = \"severe\"]
 17
 1
 11
@@ -588,7 +587,7 @@ MONITOR
 1928
 110
 Count serious
-count people with[level_of_infection = \"serious\"]
+count people with[level_of_infection = \"critical\"]
 17
 1
 11
@@ -599,7 +598,7 @@ MONITOR
 2082
 109
 count asymptomatic
-count people with[level_of_infection = \"asymptomatic\"]
+count people with[level_of_infection = \"asymptomatic\" and status = \"infected\"]
 17
 1
 11
@@ -641,7 +640,7 @@ INPUTBOX
 85
 120
 time-stop
-96.0
+335.0
 1
 0
 Number
@@ -1033,7 +1032,7 @@ NetLogo 6.1.1
 @#$#@#$#@
 @#$#@#$#@
 <experiments>
-  <experiment name="caso1" repetitions="1" runMetricsEveryStep="true">
+  <experiment name="todos los casos" repetitions="2" runMetricsEveryStep="true">
     <setup>setup</setup>
     <go>start</go>
     <exitCondition>(count people with [status = "infected"]) = 0</exitCondition>
@@ -1051,6 +1050,110 @@ NetLogo 6.1.1
     <metric>count_asymptomatic</metric>
     <metric>count_recovered</metric>
     <metric>confirmed_cases</metric>
+    <metric>current-contagion</metric>
+    <enumeratedValueSet variable="rule-ages">
+      <value value="true"/>
+      <value value="false"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="latency-period">
+      <value value="48"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="not-move?">
+      <value value="true"/>
+      <value value="false"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="min-age-to-go-outside">
+      <value value="18"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="infected-quantity">
+      <value value="3"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="population">
+      <value value="529"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="max-age-to-go-outside">
+      <value value="60"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="immunity-time">
+      <value value="240"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="show-who-infected-who">
+      <value value="false"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="stop-condition?">
+      <value value="false"/>
+    </enumeratedValueSet>
+  </experiment>
+  <experiment name="sin las restricciones" repetitions="10" runMetricsEveryStep="true">
+    <setup>setup</setup>
+    <go>start</go>
+    <exitCondition>(count people with [status = "infected"]) = 0</exitCondition>
+    <metric>number-contagion</metric>
+    <metric>number-of-deaths</metric>
+    <metric>count_men</metric>
+    <metric>count_women</metric>
+    <metric>count_uninfected</metric>
+    <metric>count_infected</metric>
+    <metric>count_infected_women</metric>
+    <metric>count_infected_men</metric>
+    <metric>count_mild</metric>
+    <metric>count_moderate</metric>
+    <metric>count_serious</metric>
+    <metric>count_asymptomatic</metric>
+    <metric>count_recovered</metric>
+    <metric>confirmed_cases</metric>
+    <metric>current-contagion</metric>
+    <enumeratedValueSet variable="rule-ages">
+      <value value="false"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="latency-period">
+      <value value="48"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="not-move?">
+      <value value="false"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="min-age-to-go-outside">
+      <value value="18"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="infected-quantity">
+      <value value="3"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="population">
+      <value value="529"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="max-age-to-go-outside">
+      <value value="60"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="immunity-time">
+      <value value="240"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="show-who-infected-who">
+      <value value="false"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="stop-condition?">
+      <value value="false"/>
+    </enumeratedValueSet>
+  </experiment>
+  <experiment name="todas las restricciones" repetitions="2" runMetricsEveryStep="true">
+    <setup>setup</setup>
+    <go>start</go>
+    <exitCondition>(count people with [status = "infected"]) = 0</exitCondition>
+    <metric>ticks</metric>
+    <metric>number-contagion</metric>
+    <metric>number-of-deaths</metric>
+    <metric>count_men</metric>
+    <metric>count_women</metric>
+    <metric>count_uninfected</metric>
+    <metric>count_infected</metric>
+    <metric>count_infected_women</metric>
+    <metric>count_infected_men</metric>
+    <metric>count_mild</metric>
+    <metric>count_moderate</metric>
+    <metric>count_serious</metric>
+    <metric>count_asymptomatic</metric>
+    <metric>count_recovered</metric>
+    <metric>confirmed_cases</metric>
+    <metric>current-contagion</metric>
     <enumeratedValueSet variable="rule-ages">
       <value value="true"/>
     </enumeratedValueSet>

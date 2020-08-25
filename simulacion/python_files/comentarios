@@ -1,0 +1,14 @@
+leve -> moderado
+moderado -> severo
+serio -> critico
+
+mild -> mild -> moderate but I think that it reference to the action and not to state
+moderate -> severe
+serious -> critical
+
+
+Presentar el modelo del q nos basamos para esta simulacion, puede ser una modificacion
+
+* SIR
+* SEIR
+* 
