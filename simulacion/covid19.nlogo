@@ -58,6 +58,7 @@ end
 
 to start
   if ((count people with [status = "infected"]) = 0)[ stop ]
+  evaluate-quarantine
   step-people
 
   set current-contagion count people with [status = "infected"]
@@ -75,6 +76,16 @@ to start
 
   ;; increate time
   tick
+end
+
+to evaluate-quarantine
+  if ((ticks mod 24) = 0)[
+    let day ticks / 24
+    if ((day mod quarantine-days) = 0)[
+      ifelse (rule-ages = true)[ set rule-ages false][ set rule-ages true ]
+      ifelse (not-move? = true)[ set not-move? false ][ set not-move? true]
+    ]
+  ]
 end
 
 to outputs
@@ -159,7 +170,7 @@ INPUTBOX
 128
 226
 population
-529.0
+584.0
 1
 0
 Number
@@ -295,10 +306,10 @@ PENS
 "Female" 1.0 0 -2674135 true "" "plot count people with[status = \"infected\" and gender = \"female\"]"
 
 MONITOR
-16
-589
-95
-634
+18
+697
+97
+742
 Male
 count people with [gender = \"male\"]
 17
@@ -306,10 +317,10 @@ count people with [gender = \"male\"]
 11
 
 MONITOR
-108
-589
-184
-634
+110
+697
+186
+742
 Female
 count people with [gender = \"female\"]
 17
@@ -328,10 +339,10 @@ not-move?
 -1000
 
 SLIDER
-16
-711
-281
-744
+18
+819
+283
+852
 immunity-time
 immunity-time
 0
@@ -343,20 +354,20 @@ Days
 HORIZONTAL
 
 TEXTBOX
-17
-683
-273
-702
+19
+791
+275
+810
 Warning: Immunity time is on DAYS scale
 12
 15.0
 1
 
 SWITCH
-14
-499
-279
-532
+16
+607
+281
+640
 show-who-infected-who
 show-who-infected-who
 1
@@ -432,10 +443,10 @@ Condiciones \nmundo 32 x 32\ntotal 100 personas\ninfectados 1\ntotal ticks hasta
 1
 
 INPUTBOX
-16
-754
-281
-814
+18
+862
+283
+922
 latency-period
 48.0
 1
@@ -443,10 +454,10 @@ latency-period
 Number
 
 TEXTBOX
-18
-651
-288
-679
+20
+759
+290
+787
 Agents configuration
 14
 0.0
@@ -536,10 +547,10 @@ count people with [(gender = \"female\") and (status = \"infected\")]
 11
 
 BUTTON
-15
-543
-118
-576
+17
+651
+120
+684
 Add infected
 ;add_infected_people
 NIL
@@ -636,10 +647,10 @@ Transmisión comunitaria
 1
 
 INPUTBOX
-13
-426
-162
-486
+15
+534
+164
+594
 patch-meters
 4.0
 1
@@ -647,10 +658,10 @@ patch-meters
 Number
 
 TEXTBOX
-168
-438
-318
-480
+170
+546
+320
+588
 1 patch -> 4 m so the maximum distance of contagion is 0.5 patch
 11
 0.0
@@ -662,7 +673,7 @@ INPUTBOX
 85
 120
 time-stop
-335.0
+0.0
 1
 0
 Number
@@ -707,10 +718,32 @@ confirmed_cases
 1
 11
 
+SWITCH
+13
+432
+166
+465
+switch-quarantine
+switch-quarantine
+0
+1
+-1000
+
+INPUTBOX
+14
+470
+163
+530
+quarantine-days
+15.0
+1
+0
+Number
+
 @#$#@#$#@
 ## WHAT IS IT?
 
-(a general understanding of what the model is trying to show or explain)
+This is a simulation that tries to simulate the 
 
 ## HOW IT WORKS
 
@@ -1165,7 +1198,7 @@ NetLogo 6.1.1
       <value value="3"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="population">
-      <value value="529"/>
+      <value value="584"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="max-age-to-go-outside">
       <value value="60"/>
@@ -1180,7 +1213,7 @@ NetLogo 6.1.1
       <value value="false"/>
     </enumeratedValueSet>
   </experiment>
-  <experiment name="todas las restricciones" repetitions="2" runMetricsEveryStep="true">
+  <experiment name="todas las restricciones" repetitions="10" runMetricsEveryStep="true">
     <setup>setup</setup>
     <go>start</go>
     <exitCondition>(count people with [status = "infected"]) = 0</exitCondition>
@@ -1216,7 +1249,7 @@ NetLogo 6.1.1
       <value value="3"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="population">
-      <value value="529"/>
+      <value value="584"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="max-age-to-go-outside">
       <value value="60"/>
